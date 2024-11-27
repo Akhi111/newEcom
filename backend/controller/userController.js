@@ -140,3 +140,45 @@ export const forgotPassword = async (req, res) => {
     });
   }
 };
+
+//Verify ForgotPassword otp
+
+export const verifyForgotPasswordOtp = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    if (!(email || otp)) {
+      return res
+        .status(404)
+        .json({ status: false, message: "Please enter your Email and OTP." });
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Email not available" });
+    }
+    const currentTime = new Date();
+    if (user.forgot_password_expiry < currentTime) {
+      return res.status(400).json({ status: false, message: "OTP is expired" });
+    }
+    if (otp !== user.forgot_password_expiry) {
+      return res.status().json({
+        status: false,
+        message: "OTP entered is incorrect or invalid",
+      });
+    }
+
+    //if otp is not expire
+    //if otp === user.forgot_password_expiry
+
+    return res
+      .status(201)
+      .json({ status: true, message: "OTP verify successfully." });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};

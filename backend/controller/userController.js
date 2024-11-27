@@ -113,7 +113,8 @@ export const forgotPassword = async (req, res) => {
         .json({ status: false, message: "Email not found", error: true });
     }
     const otp = generateOtp();
-    const expireTimeOtp = new Date() + 10 * 60 * 1000; //10min
+
+    const expireTimeOtp = new Date(new Date().getTime() + 10 * 60 * 1000); //10min
 
     const updateOtpExpireTimeOtp = await User.findByIdAndUpdate(user._id, {
       forgot_password_otp: otp,
@@ -141,14 +142,14 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
-//Verify ForgotPassword otp
+//Verify ForgotPassword otp Controller
 
 export const verifyForgotPasswordOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
-    if (!(email || otp)) {
+    if (!(email && otp)) {
       return res
-        .status(404)
+        .status(400)
         .json({ status: false, message: "Please enter your Email and OTP." });
     }
     const user = await User.findOne({ email });
@@ -157,23 +158,81 @@ export const verifyForgotPasswordOtp = async (req, res) => {
         .status(400)
         .json({ status: false, message: "Email not available" });
     }
-    const currentTime = new Date();
+
+    const currentTime = new Date().toISOString();
     if (user.forgot_password_expiry < currentTime) {
-      return res.status(400).json({ status: false, message: "OTP is expired" });
-    }
-    if (otp !== user.forgot_password_expiry) {
-      return res.status().json({
+      return res.status(400).json({
         status: false,
-        message: "OTP entered is incorrect or invalid",
+        message: "OTP has expired. Please request a new OTP.",
+      });
+    }
+
+    if (otp !== user.forgot_password_otp) {
+      return res.status(400).json({
+        status: false,
+        message: "Incorrect OTP. Please try again or request a new one.",
       });
     }
 
     //if otp is not expire
-    //if otp === user.forgot_password_expiry
+    //if otp === user.forgot_password_otp
 
     return res
-      .status(201)
-      .json({ status: true, message: "OTP verify successfully." });
+      .status(200)
+      .json({ status: true, message: "OTP verified successfully." });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+//ResetPassword Controller
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, oldPassword, newPassword, confirmPassword } = req.body;
+
+    if (!(email && oldPassword && newPassword && confirmPassword)) {
+      return res
+        .status(400)
+        .json({ status: false, message: "All fields are require." });
+    }
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Email not exists." });
+    }
+    // Check if oldPassword matches the stored password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({
+        status: false,
+        message: "Old password is incorrect.",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        status: false,
+        message: "New password and confirm password are not same.",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password in the database
+    user.password = hashedPassword;
+
+    await user.save();
+
+    return res.status(200).json({
+      status: true,
+      message: "Password reset successfully.",
+    });
   } catch (error) {
     return res.status(500).json({
       status: false,

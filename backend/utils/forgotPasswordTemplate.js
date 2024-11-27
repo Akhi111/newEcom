@@ -61,7 +61,7 @@ export const forgotPasswordTemplate = ({ name, otp }) => {
                 <p>Dear ${name},</p>
                 <p>Your OTP code is:</p>
                 <div class="otp-code">${otp}</div>
-                <p>Use the following OTP to complete the procedure to change your password. OTP is valid for 1 hr. Do not share this code with others, including <span>Blinkit</span> employees.</p>
+                <p>Use the following OTP to complete the procedure to change your password. OTP is valid for 10 minutes. Do not share this code with others, including <span>Blinkit</span> employees.</p>
             </div>
             <div class="footer">
                 <p>Thank you for using our service!</p>

@@ -113,7 +113,7 @@ export const forgotPassword = async (req, res) => {
         .json({ status: false, message: "Email not found", error: true });
     }
     const otp = generateOtp();
-    const expireTimeOtp = new Date() + 60 * 60 * 1000; //1hr
+    const expireTimeOtp = new Date() + 10 * 60 * 1000; //10min
 
     const updateOtpExpireTimeOtp = await User.findByIdAndUpdate(user._id, {
       forgot_password_otp: otp,

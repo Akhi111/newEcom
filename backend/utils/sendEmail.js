@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import { verifyEmailTemplate } from "./verifyEmailTemplate.js";
 
 dotenv.config();
 
@@ -14,8 +13,6 @@ const transporter = nodemailer.createTransport({
 
 export const sendEmail = async ({ sendTo, subject, html }) => {
   try {
-    // const htmlContentEmail = await verifyEmailTemplate({ name, url });
-
     const mailOptions = {
       from: process.env.EMAIL_USER, // Your email address
       to: sendTo, // Recipient's email address

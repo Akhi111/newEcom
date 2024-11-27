@@ -114,11 +114,14 @@ export const forgotPassword = async (req, res) => {
     }
     const otp = generateOtp();
 
-    const expireTimeOtp = new Date(new Date().getTime() + 10 * 60 * 1000); //10min
+    // const expireTimeOtp = new Date(new Date().getTime() + 10 * 60 * 1000); //10min
+
+    const expireTimeOtp = new Date(new Date().getTime() + 1 * 60 * 1000); // 1 minute
+    const expireTimeOtpISOString = expireTimeOtp.toISOString(); // Convert to ISO string
 
     const updateOtpExpireTimeOtp = await User.findByIdAndUpdate(user._id, {
       forgot_password_otp: otp,
-      forgot_password_expiry: new Date(expireTimeOtp).toISOString(),
+      forgot_password_expiry: new Date(expireTimeOtpISOString),
     });
 
     await sendEmail({
@@ -160,7 +163,10 @@ export const verifyForgotPasswordOtp = async (req, res) => {
     }
 
     const currentTime = new Date().toISOString();
-    if (user.forgot_password_expiry < currentTime) {
+    const otpExpiryTime = user.forgot_password_expiry;
+
+    // if (user.forgot_password_expiry < currentTime) {
+    if (new Date(otpExpiryTime) < new Date(currentTime)) {
       return res.status(400).json({
         status: false,
         message: "OTP has expired. Please request a new OTP.",

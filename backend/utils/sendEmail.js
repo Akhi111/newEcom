@@ -9,8 +9,6 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
-    // user: "ultrongaming125@gmail.com", // Your email address
-    // pass: "tuontpqwydauuygq", // Your email password or App password if using Gmail
   },
 });
 

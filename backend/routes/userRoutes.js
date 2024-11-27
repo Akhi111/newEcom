@@ -10,6 +10,6 @@ const route = express.Router();
 
 route.post("/updateUser", authMiddleware, updateUser);
 route.put("/updatePassword", authMiddleware, updatePassword);
-route.post("/forgotPassword", forgotPassword);
+route.put("/forgotPassword", forgotPassword);
 
 export default route;

@@ -1,4 +1,4 @@
-export const verifyEmailTemplate = async ({ name, url }) => {
+export const verifyEmailTemplate = ({ name, url }) => {
   return `
     <!DOCTYPE html>
 <html lang="en">

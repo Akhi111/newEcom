@@ -12,15 +12,15 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendEmail = async ({ sendTo, subject, name, html, url }) => {
+export const sendEmail = async ({ sendTo, subject, html }) => {
   try {
-    const htmlContent = await verifyEmailTemplate({ name, url });
+    // const htmlContentEmail = await verifyEmailTemplate({ name, url });
 
     const mailOptions = {
       from: process.env.EMAIL_USER, // Your email address
       to: sendTo, // Recipient's email address
       subject: subject, // Subject line
-      html: htmlContent, // HTML body (your OTP template)
+      html: html, // HTML body (your OTP template)
     };
 
     const info = await transporter.sendMail(mailOptions);

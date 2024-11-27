@@ -2,6 +2,7 @@ import User from "../model/user.model.js";
 import bcrypt from "bcryptjs";
 import { generateOtp } from "../utils/generateOpt.js";
 import { forgotPasswordTemplate } from "../utils/forgotPasswordTemplate.js";
+import { sendEmail } from "../utils/sendEmail.js";
 
 //UpdateUser Controller
 
@@ -114,7 +115,7 @@ export const forgotPassword = async (req, res) => {
     const otp = generateOtp();
     const expireTimeOtp = new Date() + 60 * 60 * 1000; //1hr
 
-    const updateOtpExpiteTimeOpt = await User.findByIdAndUpdate(user._id, {
+    const updateOtpExpireTimeOtp = await User.findByIdAndUpdate(user._id, {
       forgot_password_otp: otp,
       forgot_password_expiry: new Date(expireTimeOtp).toISOString(),
     });

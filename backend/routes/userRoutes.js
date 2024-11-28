@@ -1,6 +1,7 @@
 import express from "express";
 import {
   forgotPassword,
+  refreshToken,
   resetPassword,
   updatePassword,
   updateUser,
@@ -15,5 +16,6 @@ route.put("/updatePassword", authMiddleware, updatePassword);
 route.put("/forgotPassword", forgotPassword);
 route.put("/verifyForgotPasswordOtp", verifyForgotPasswordOtp);
 route.put("/resetPassword", resetPassword);
+route.post("/refreshToken", refreshToken);
 
 export default route;

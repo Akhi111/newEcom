@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { generateOtp } from "../utils/generateOpt.js";
 import { forgotPasswordTemplate } from "../utils/forgotPasswordTemplate.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import { generateAccessToken, verifyRefreshToken } from "../utils/jwtTokens.js";
 
 //UpdateUser Controller
 
@@ -224,7 +225,7 @@ export const resetPassword = async (req, res) => {
     if (newPassword !== confirmPassword) {
       return res.status(400).json({
         status: false,
-        message: "New password and confirm password are not same.",
+        message: "New password and confirm password are must be same.",
       });
     }
 
@@ -238,6 +239,49 @@ export const resetPassword = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "Password reset successfully.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+};
+
+//Refresh Token Controller
+
+export const refreshToken = async (req, res) => {
+  try {
+    const refreshToken =
+      req.cookies.refreshToken ||
+      req?.headers?.authorization?.split(" ")[1].trim();
+    if (!refreshToken) {
+      return res.status(401).json({ status: false, message: "Invalid token" });
+    }
+    //console.log("refreshToken", refreshToken);
+    const verifyToken = verifyRefreshToken(refreshToken);
+    if (!verifyToken) {
+      return res
+        .status(401)
+        .json({ status: false, message: "Token is expired." });
+    }
+    //console.log("verifyToken", verifyToken);
+    //user's ID (_id) is extracted from the verifyToken object.
+    const userId = verifyToken?._id;
+
+    const newAcceessToken = await generateAccessToken(userId);
+    const cookiesOption = {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+    };
+    res.cookie("accessToken", newAcceessToken, cookiesOption);
+
+    return res.status(200).json({
+      status: true,
+      message: "New acceess token generated.",
+      data: { accessToken: newAcceessToken, refreshToken },
     });
   } catch (error) {
     return res.status(500).json({

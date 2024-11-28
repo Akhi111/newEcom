@@ -200,9 +200,9 @@ export const verifyForgotPasswordOtp = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
   try {
-    const { email, oldPassword, newPassword, confirmPassword } = req.body;
+    const { email, newPassword, confirmPassword } = req.body;
 
-    if (!(email && oldPassword && newPassword && confirmPassword)) {
+    if (!(email && newPassword && confirmPassword)) {
       return res
         .status(400)
         .json({ status: false, message: "All fields are require." });
@@ -212,14 +212,6 @@ export const resetPassword = async (req, res) => {
       return res
         .status(400)
         .json({ status: false, message: "Email not exists." });
-    }
-    // Check if oldPassword matches the stored password
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
-      return res.status(400).json({
-        status: false,
-        message: "Old password is incorrect.",
-      });
     }
 
     if (newPassword !== confirmPassword) {

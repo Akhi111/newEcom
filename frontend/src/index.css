@@ -3,3 +3,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* shake.css */
+@keyframes tilt-shake {
+  0% {
+    transform: rotate(-10deg); /* Tilt to the left */
+  }
+  25% {
+    transform: rotate(10deg); /* Tilt to the right */
+  }
+  50% {
+    transform: rotate(-10deg); /* Tilt to the left */
+  }
+  75% {
+    transform: rotate(10deg); /* Tilt to the right */
+  }
+  100% {
+    transform: rotate(0deg); /* Return to original position */
+  }
+}
+
+.cart-icon {
+  display: inline-block;
+  transition: transform 0.3s ease-in-out; /* Optional smooth transition */
+}
+
+.cart-icon:hover {
+  animation: tilt-shake 0.5s ease-in-out; /* Trigger shake animation on hover */
+}

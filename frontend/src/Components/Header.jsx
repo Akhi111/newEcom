@@ -15,7 +15,7 @@ const Header = () => {
     navigate("/login");
   };
   return (
-    <header className="h-24 lg:h-20 lg:shadow-md sticky top-0 flex justify-center flex-col">
+    <header className="h-24 lg:h-20 lg:shadow-md sticky top-0 flex justify-center flex-col bg-white">
       {!(isSearchPage && isMobile) && (
         <div className=" container mx-auto flex items-center px-2 py-2 justify-between">
           {/* logo */}
